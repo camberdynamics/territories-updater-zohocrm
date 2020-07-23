@@ -1,0 +1,37 @@
+//Get the Territories assigned to the Account
+response = invokeurl
+[
+	url :"https://www.zohoapis.com/crm/v2.1/accounts/" + accountid
+	type :GET
+	connection:"zohoterritories" //--> change this to whatever the connection name is
+];
+
+//Get all the territory IDs
+territoryids = List();
+response = response.get("data").get(0).get("Territories");
+for each  r in response
+{
+	territoryids.add(r.get("id"));
+}
+
+//Get all Related Contacts to the Account
+account = zoho.crm.getRecordById("Accounts",accountid);
+contacts = zoho.crm.getRelatedRecords("Contacts","Accounts",accountid);
+
+//Assign all relevant territories to all related Contacts
+for each  c in contacts
+{
+	contactid = c.get("id");
+  for each  id in territoryids
+	{
+		paramap = {"data":{{"Territories":{{"id":id}}}}};
+		response2 = invokeurl
+		[
+			url :"https://www.zohoapis.com/crm/v2.1/Contacts/" + contactid + "/actions/assign_territories"
+			type :POST
+			parameters:paramap + ""
+			connection:"zohoterritories" //--> change this to whatever the connection name is
+		];
+		info response2;
+	}
+}
