@@ -52,7 +52,7 @@ contacts = zoho.crm.getRelatedRecords("Contacts","Accounts",accountid);
 for each  c in contacts
 {
 	contactid = c.get("id");
-  for each  id in territoryids
+  	for each  id in territoryids
 	{
 		paramap = {"data":{{"Territories":{{"id":id}}}}};
 		response2 = invokeurl
